@@ -234,13 +234,12 @@ class UserverConan(ConanFile):
                 src=os.path.join(self.source_folder, 'cmake'),
                 keep_path=True,
             )
-            grpc_file = open(
+            with open(
                 os.path.join(self.package_folder, 'cmake', 'GrpcConan.cmake'),
                 'a+',
-            )
-            grpc_file.write('\nset(USERVER_CONAN TRUE)')
-            grpc_file.write('\nset(PYTHON "python3")')
-            grpc_file.close()
+            ) as grpc_file:
+                grpc_file.write('\nset(USERVER_CONAN TRUE)')
+                grpc_file.write('\nset(PYTHON "python3")')
         if self.options.with_utest:
             copy(
                 self,
@@ -484,7 +483,7 @@ class UserverConan(ConanFile):
                 # for find_package() but not possible yet in CMakeDeps
                 #       see https://github.com/conan-io/conan/issues/10258
                 self.cpp_info.components[conan_component].set_property(
-                    'cmake_target_name', 'userver::' + cmake_target,
+                    'cmake_target_name', f'userver::{cmake_target}'
                 )
                 self.cpp_info.components[conan_component].libs = [lib_name]
                 if cmake_component == 'core':
@@ -497,7 +496,7 @@ class UserverConan(ConanFile):
                     ].includedirs.append(
                         os.path.join('include', cmake_component),
                     )
-                if cmake_component == 'core' or cmake_component == 'universal':
+                if cmake_component in ['core', 'universal']:
                     self.cpp_info.components[
                         conan_component
                     ].includedirs.append(os.path.join('include', 'shared'))

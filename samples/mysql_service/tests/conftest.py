@@ -32,9 +32,7 @@ def service_env():
 
 @pytest.fixture(scope='session')
 def mysql_local(service_source_dir):
-    databases = discover.find_schemas(
+    return discover.find_schemas(
         schema_dirs=[service_source_dir.joinpath('schemas', 'mysql')],
         dbprefix='',
     )
-
-    return databases

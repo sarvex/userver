@@ -14,7 +14,7 @@ def _normalize_metrics(metrics: str) -> typing.Set[str]:
 
         # skip metrics related to service commands
         # since we cannot force them to appear
-        if any(('redis_command=' + cmd) in line for cmd in SERVICE_COMMANDS):
+        if any(f'redis_command={cmd}' in line for cmd in SERVICE_COMMANDS):
             continue
 
         # TODO: make the metrics less flapping:
@@ -29,7 +29,7 @@ def _normalize_metrics(metrics: str) -> typing.Set[str]:
             'redis_instance=localhost_00001',
             left,
         )
-        result.add(left + ' ' + '0')
+        result.add(f'{left} 0')
 
     return result
 

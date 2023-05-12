@@ -51,8 +51,7 @@ class DynamicConfig:
         return self._values.copy()
 
     def remove_values(self, keys):
-        extra_keys = set(keys).difference(self._values.keys())
-        if extra_keys:
+        if extra_keys := set(keys).difference(self._values.keys()):
             raise DynamicConfigNotFoundError(
                 f'Attempting to remove nonexistent configs: {extra_keys}',
             )

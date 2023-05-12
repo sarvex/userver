@@ -6,7 +6,7 @@ def _normalize_metrics(metrics: str) -> str:
     for line in metrics.splitlines():
         if 'rabbitmq' in line:
             left, _, _ = line.rsplit(' ', 2)
-            result.append(left + ' ' + '0')
+            result.append(f'{left} 0')
 
     result.sort()
     return '\n'.join(result)

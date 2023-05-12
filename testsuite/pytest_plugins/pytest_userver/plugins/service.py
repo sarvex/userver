@@ -30,13 +30,11 @@ class ColorLogger(logger.Logger):
         )
 
     def log_service_line(self, line) -> None:
-        line = self._colorizer.colorize_line(line)
-        if line:
+        if line := self._colorizer.colorize_line(line):
             self.writeline(line)
 
     def log_entry(self, entry: dict) -> None:
-        line = self._colorizer.colorize_row(entry)
-        if line:
+        if line := self._colorizer.colorize_row(entry):
             self.writeline(line)
 
 
@@ -70,14 +68,14 @@ def pytest_addoption(parser) -> None:
 def pytest_override_testsuite_logger(
         config, line_logger: logger.LineLogger, colors_enabled: bool,
 ) -> typing.Optional[logger.Logger]:
-    pretty_logs = config.option.service_logs_pretty
-    if not pretty_logs:
+    if pretty_logs := config.option.service_logs_pretty:
+        return ColorLogger(
+            writer=line_logger,
+            verbose=pretty_logs == 'verbose',
+            colors_enabled=colors_enabled,
+        )
+    else:
         return None
-    return ColorLogger(
-        writer=line_logger,
-        verbose=pretty_logs == 'verbose',
-        colors_enabled=colors_enabled,
-    )
 
 
 @pytest.fixture(scope='session')
@@ -106,8 +104,7 @@ async def service_http_ping_url(
     @ingroup userver_testsuite_fixtures
     """
     components = service_config_yaml['components_manager']['components']
-    ping_handler = components.get('handler-ping')
-    if ping_handler:
+    if ping_handler := components.get('handler-ping'):
         return url_util.join(service_baseurl, ping_handler['path'])
     return None
 
@@ -217,9 +214,9 @@ def _userver_log_handler(pytestconfig, testsuite_logger, _uservice_logfile):
 
 @pytest.fixture(scope='session')
 def _uservice_logfile(pytestconfig):
-    path = pytestconfig.option.service_logs_file
-    if not path:
-        yield None
-    else:
+    if path := pytestconfig.option.service_logs_file:
         with path.open('wb') as fp:
             yield fp
+
+    else:
+        yield None

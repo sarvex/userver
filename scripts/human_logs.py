@@ -88,10 +88,7 @@ class HumanLogs:
         if 'text' in self.ignores:
             text = ''
 
-        text_color = Colors.GREEN
-        if level in ('DEBUG', 'TRACE'):
-            text_color = Colors.DARK_GRAY
-
+        text_color = Colors.DARK_GRAY if level in ('DEBUG', 'TRACE') else Colors.GREEN
         module = values.pop('module', '?')
         if 'module' in self.ignores:
             module = ''
@@ -116,7 +113,7 @@ class HumanLogs:
                 for x in values
                 if (x not in self.ignores and values[x] != '')
             )
-            remains = '\t'.join(x + '=' + values[x] for x in sorted(remains))
+            remains = '\t'.join(f'{x}={values[x]}' for x in sorted(remains))
 
         if level == 'WARNING':
             level = 'WARN'

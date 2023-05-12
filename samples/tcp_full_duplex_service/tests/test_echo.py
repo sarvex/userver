@@ -160,8 +160,12 @@ async def test_multiple_socks(
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         await loop.sock_connect(sock, ('localhost', tcp_service_port))
         sock.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1)
-        tasks.append(asyncio.create_task(send_all_data(sock, loop)))
-        tasks.append(asyncio.create_task(recv_all_data(sock, loop)))
+        tasks.extend(
+            (
+                asyncio.create_task(send_all_data(sock, loop)),
+                asyncio.create_task(recv_all_data(sock, loop)),
+            )
+        )
     await asyncio.gather(*tasks)
 
     metrics = await monitor_client.metrics(prefix='tcp-echo.')

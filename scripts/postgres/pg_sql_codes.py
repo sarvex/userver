@@ -275,10 +275,7 @@ def main():
                 file=test,
             )
             for err_class in error_classes:
-                print(
-                    'TEST(PostgreError, SqlState' + err_class.name[1:] + ') {',
-                    file=test,
-                )
+                print(f'TEST(PostgreError, SqlState{err_class.name[1:]}' + ') {', file=test)
                 err_class.print_test(test)
                 print('}\n', file=test)
 

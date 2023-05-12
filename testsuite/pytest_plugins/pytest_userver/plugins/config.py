@@ -236,10 +236,7 @@ def _service_config(
 
     plugin = pytestconfig.pluginmanager.get_plugin('userver_config')
     for hook in plugin.userver_config_hooks:
-        if not callable(hook):
-            hook_func = request.getfixturevalue(hook)
-        else:
-            hook_func = hook
+        hook_func = request.getfixturevalue(hook) if not callable(hook) else hook
         hook_func(config_yaml, config_vars)
 
     if not config_vars:

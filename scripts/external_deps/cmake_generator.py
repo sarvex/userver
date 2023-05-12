@@ -63,8 +63,6 @@ def _load_yaml(path):
 
 
 def generate_cmake(name: str, value, renderer: jinja2.Environment):
-    result: dict = {}
-
     fail_message = value.get('fail-message')
     if fail_message:
         fail_message = fail_message.replace('\n', ' ')
@@ -74,29 +72,30 @@ def generate_cmake(name: str, value, renderer: jinja2.Environment):
     cmake_type = value.get('type', FIND_HELPER_TYPE)
 
     assert cmake_type == FIND_HELPER_TYPE
-    result[filename] = renderer.get_template('FindHelper.jinja').render(
-        {
-            'name': name,
-            'package_name': value.get('package-name'),
-            'common_name': value.get('common-name'),
-            'debian_names': value.get('debian-names'),
-            'formula_name': value.get('formula-name'),
-            'rpm_names': value.get('rpm-names'),
-            'pacman_names': value.get('pacman-names'),
-            'pkg_names': value.get('pkg-names'),
-            'pkg_config_names': value.get('pkg-config-names'),
-            'version': value.get('version'),
-            'extra_cmake_vars': value.get('extra-cmake-vars', {}),
-            'includes': value.get('includes'),
-            'libraries': value.get('libraries'),
-            'programs': value.get('programs'),
-            'fail_message': fail_message,
-            'virtual': value.get('virtual', False),
-            'compile_definitions': value.get('compile-definitions'),
-            'checks': value.get('checks', []),
-        },
-    )
-
+    result: dict = {
+        filename: renderer.get_template('FindHelper.jinja').render(
+            {
+                'name': name,
+                'package_name': value.get('package-name'),
+                'common_name': value.get('common-name'),
+                'debian_names': value.get('debian-names'),
+                'formula_name': value.get('formula-name'),
+                'rpm_names': value.get('rpm-names'),
+                'pacman_names': value.get('pacman-names'),
+                'pkg_names': value.get('pkg-names'),
+                'pkg_config_names': value.get('pkg-config-names'),
+                'version': value.get('version'),
+                'extra_cmake_vars': value.get('extra-cmake-vars', {}),
+                'includes': value.get('includes'),
+                'libraries': value.get('libraries'),
+                'programs': value.get('programs'),
+                'fail_message': fail_message,
+                'virtual': value.get('virtual', False),
+                'compile_definitions': value.get('compile-definitions'),
+                'checks': value.get('checks', []),
+            }
+        )
+    }
     return result
 
 

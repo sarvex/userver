@@ -66,9 +66,7 @@ class Colorizer:
         self.colors_enabled = colors_enabled
 
     def colorize_line(self, line):
-        if not line.startswith('tskv\t'):
-            return line
-        return self.colorize_tskv(line)
+        return line if not line.startswith('tskv\t') else self.colorize_tskv(line)
 
     def colorize_tskv(self, line):
         row = tskv.parse_line(line)
@@ -115,8 +113,7 @@ class Colorizer:
                     self._http_status('meta_code', status_code),
                 )
             for key in ('method', 'url', 'status', 'exc_info', 'delay'):
-                value = row.pop(key, None)
-                if value:
+                if value := row.pop(key, None):
                     extra_fields.append(f'{key}={value}')
 
         if link in self._requests:
@@ -146,9 +143,7 @@ class Colorizer:
         return ' '.join(fields)
 
     def textcolor(self, text, color):
-        if not self.colors_enabled:
-            return str(text)
-        return f'{color}{text}{Colors.DEFAULT}'
+        return f'{color}{text}{Colors.DEFAULT}' if self.colors_enabled else str(text)
 
     def _http_status(self, key, status):
         color = HTTP_STATUS_COLORS.get(status[:1], Colors.DEFAULT)
@@ -163,14 +158,13 @@ class Colorizer:
 
 
 def format_json(obj):
-    encoded = json.dumps(
+    return json.dumps(
         obj,
         indent=2,
         separators=(',', ': '),
         sort_keys=True,
         ensure_ascii=False,
     )
-    return encoded
 
 
 def try_reformat_json(body):

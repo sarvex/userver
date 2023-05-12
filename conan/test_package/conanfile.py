@@ -23,53 +23,54 @@ class TestPackageConan(ConanFile):
         cmake.build()
 
     def test(self):
-        if can_run(self):
-            bin_path = os.path.join(
-                self.cpp.build.bindirs[0], 'PackageTest_core',
-            )
-            self.run(bin_path, env='conanrun')
-            bin_path = os.path.join(
-                self.cpp.build.bindirs[0], 'PackageTest_utest',
-            )
-            self.run(bin_path, env='conanrun')
-            bin_path = os.path.join(
-                self.cpp.build.bindirs[0], 'PackageTest_grpc',
-            )
-            self.run(bin_path, env='conanrun')
-            bin_path = os.path.join(
-                self.cpp.build.bindirs[0], 'PackageTest_mongo',
-            )
-            self.run(bin_path, env='conanrun')
-            bin_path = os.path.join(
-                self.cpp.build.bindirs[0], 'PackageTest_postgresql',
-            )
-            self.run(bin_path, env='conanrun')
-            bin_path = os.path.join(
-                self.cpp.build.bindirs[0], 'PackageTest_rabbitmq',
-            )
-            self.run(bin_path, env='conanrun')
-            bin_path = os.path.join(
-                self.cpp.build.bindirs[0], 'PackageTest_redis',
-            )
-            self.run(bin_path, env='conanrun')
-            bin_path = os.path.join(
-                self.cpp.build.bindirs[0], 'PackageTest_universal',
-            )
-            self.run(bin_path, env='conanrun')
+        if not can_run(self):
+            return
+        bin_path = os.path.join(
+            self.cpp.build.bindirs[0], 'PackageTest_core',
+        )
+        self.run(bin_path, env='conanrun')
+        bin_path = os.path.join(
+            self.cpp.build.bindirs[0], 'PackageTest_utest',
+        )
+        self.run(bin_path, env='conanrun')
+        bin_path = os.path.join(
+            self.cpp.build.bindirs[0], 'PackageTest_grpc',
+        )
+        self.run(bin_path, env='conanrun')
+        bin_path = os.path.join(
+            self.cpp.build.bindirs[0], 'PackageTest_mongo',
+        )
+        self.run(bin_path, env='conanrun')
+        bin_path = os.path.join(
+            self.cpp.build.bindirs[0], 'PackageTest_postgresql',
+        )
+        self.run(bin_path, env='conanrun')
+        bin_path = os.path.join(
+            self.cpp.build.bindirs[0], 'PackageTest_rabbitmq',
+        )
+        self.run(bin_path, env='conanrun')
+        bin_path = os.path.join(
+            self.cpp.build.bindirs[0], 'PackageTest_redis',
+        )
+        self.run(bin_path, env='conanrun')
+        bin_path = os.path.join(
+            self.cpp.build.bindirs[0], 'PackageTest_universal',
+        )
+        self.run(bin_path, env='conanrun')
 
-            bin_path = os.path.join(
-                self.cpp.build.bindirs[0],
-                'hello_service',
-                'runtests-testsuite-conan-samples-hello_service',
-            )
-            command = ' '
-            folder = os.path.join(
-                self.recipe_folder,
-                '..',
-                '..',
-                'samples',
-                'hello_service',
-                'tests',
-            )
-            args = [bin_path, '--service-logs-pretty', '-vv', folder]
-            self.run(command.join(args), env='conanrun')
+        bin_path = os.path.join(
+            self.cpp.build.bindirs[0],
+            'hello_service',
+            'runtests-testsuite-conan-samples-hello_service',
+        )
+        folder = os.path.join(
+            self.recipe_folder,
+            '..',
+            '..',
+            'samples',
+            'hello_service',
+            'tests',
+        )
+        args = [bin_path, '--service-logs-pretty', '-vv', folder]
+        command = ' '
+        self.run(command.join(args), env='conanrun')

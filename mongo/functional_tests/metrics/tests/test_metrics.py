@@ -16,13 +16,11 @@ def _is_mongo_metric(line: str) -> bool:
 
     # These errors sometimes appear during service startup,
     # it's tedious to reproduce them for metrics tests.
-    if 'mongo.pool.conn-init.errors' in line and (
-            'mongo_error=network' in line
-            or 'mongo_error=cluster-unavailable' in line
-    ):
-        return False
-
-    return True
+    return (
+        'mongo.pool.conn-init.errors' not in line
+        or 'mongo_error=network' not in line
+        and 'mongo_error=cluster-unavailable' not in line
+    )
 
 
 def _normalize_metrics(metrics: str) -> str:

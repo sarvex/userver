@@ -37,9 +37,7 @@ class _MetricsJSONEncoder(json.JSONEncoder):
     def default(self, o):  # pylint: disable=method-hidden
         if dataclasses.is_dataclass(o):
             return dataclasses.asdict(o)
-        if isinstance(o, set):
-            return list(o)
-        return super().default(o)
+        return list(o) if isinstance(o, set) else super().default(o)
 
 
 class MetricsSnapshot:
@@ -138,9 +136,7 @@ class MetricsSnapshot:
                 len(entry) <= 1
             ), f'Multiple metrics found by path "{path}": {entry}'
 
-        if default is not None and not entry:
-            return default
-        return next(iter(entry)).value
+        return next(iter(entry)).value if default is None or entry else default
 
     def assert_equals(
             self,
@@ -181,12 +177,12 @@ _FlattenedSnapshot = typing.Set[typing.Tuple[str, Metric]]
 
 
 def _flatten_snapshot(values, ignore_zeros: bool) -> _FlattenedSnapshot:
-    return set(
+    return {
         (path, metric)
         for path, metrics in values.items()
         for metric in metrics
         if metric.value != 0 or not ignore_zeros
-    )
+    }
 
 
 def _diff_metric_snapshots(

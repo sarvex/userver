@@ -57,8 +57,7 @@ class Loader:
     def load(self) -> Any:
         with open(self.path) as ffi:
             contents = yaml.safe_load(ffi)
-        default = contents['default']
-        return default
+        return contents['default']
 
 
 def make_loader(path: str) -> Loader:
@@ -87,10 +86,7 @@ def write_fallbacks(config: Config, fallbacks: Dict[str, Any]) -> None:
                 contents = yaml.safe_load(ffi)
             configs_names += contents.get('configs', {}).get('names', [])
 
-        configs = {}
-        for name in configs_names:
-            configs[name] = fallbacks[name].load()
-
+        configs = {name: fallbacks[name].load() for name in configs_names}
         for name, value in group.overrides.items():
             configs[name] = value
 

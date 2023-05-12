@@ -190,12 +190,10 @@ async def test_to_server_parallel_udp_message(
 ):
     messages_count = 100
 
-    tasks: typing.List[typing.Awaitable] = []
-    for i in range(messages_count):
-        tasks.append(
-            loop.sock_sendall(udp_client, b'message' + i.to_bytes(1, 'big')),
-        )
-
+    tasks: typing.List[typing.Awaitable] = [
+        loop.sock_sendall(udp_client, b'message' + i.to_bytes(1, 'big'))
+        for i in range(messages_count)
+    ]
     await asyncio.gather(*tasks)
 
     res: typing.List[bool] = [False] * messages_count

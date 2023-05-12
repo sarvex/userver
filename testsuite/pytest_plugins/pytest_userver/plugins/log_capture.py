@@ -32,11 +32,7 @@ class CapturedLogs:
                 await callback(**row)
 
     def select(self, **query) -> typing.List[tskv.TskvRow]:
-        result = []
-        for row in self._logs:
-            if _match_entry(row, query):
-                result.append(row)
-        return result
+        return [row for row in self._logs if _match_entry(row, query)]
 
     def subscribe(self, **query):
         def decorator(func):
@@ -156,7 +152,4 @@ def _userver_config_logs_capture(_userver_log_capture_socket):
 
 
 def _match_entry(row: tskv.TskvRow, query) -> bool:
-    for key, value in query.items():
-        if row.get(key) != value:
-            return False
-    return True
+    return all(row.get(key) == value for key, value in query.items())

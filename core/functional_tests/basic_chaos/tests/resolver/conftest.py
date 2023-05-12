@@ -58,7 +58,7 @@ class DnsServerProtocol:
 
         # Copy request data
         response: bytes = b''
-        response += data[0:2]  # 2 bytes txn id
+        response += data[:2]
         response += _set_response(data[2:4])  # 2 bytes flags
         response += data[4:6]  # 2 bytes queries count
         response += b'\x00\x01'  # 2 bytes answers count

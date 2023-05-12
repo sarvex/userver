@@ -12,7 +12,7 @@ def _normalize_metrics(metrics: str) -> str:
             continue
 
         left = re.sub('localhost_\\d+', 'localhost_00000', left)
-        result.append(left + ' ' + '0')
+        result.append(f'{left} 0')
 
     result.sort()
     return '\n'.join(result)

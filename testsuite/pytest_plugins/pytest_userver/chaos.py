@@ -160,8 +160,7 @@ class _InterceptBpsLimit:
             self._bytes_left += bytes_addition
             self._time_last_added = current_time
 
-            if self._bytes_left > self._bytes_per_second:
-                self._bytes_left = self._bytes_per_second
+            self._bytes_left = min(self._bytes_left, self._bytes_per_second)
 
     async def __call__(
             self, loop: EvLoop, socket_from: Socket, socket_to: Socket,
@@ -258,7 +257,7 @@ class _InterceptBytesLimit:
     ) -> None:
         data = await loop.sock_recv(socket_from, RECV_MAX_SIZE)
         if self._bytes_remain <= len(data):
-            await loop.sock_sendall(socket_to, data[0 : self._bytes_remain])
+            await loop.sock_sendall(socket_to, data[:self._bytes_remain])
             await self._gate.sockets_close()
             self._bytes_remain = self._bytes_limit
             raise GateInterceptException('Data transmission limit reached')
@@ -531,7 +530,7 @@ class BaseGate:
             self, *, count: typing.Optional[int] = None,
     ) -> None:
         """ Close all the connection going through the gate """
-        for x in list(self._sockets)[0:count]:
+        for x in list(self._sockets)[:count]:
             await x.shutdown()
         self._collect_garbage()
 

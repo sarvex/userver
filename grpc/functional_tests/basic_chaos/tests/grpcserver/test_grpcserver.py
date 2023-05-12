@@ -18,9 +18,7 @@ async def test_say_hello_response_stream(greeter_protos, grpc_client, gate):
 
 
 def _prepare_requests(greeter_protos, names, sleep=1):
-    reqs = []
-    for name in names:
-        reqs.append(greeter_protos.GreetingRequest(name=name))
+    reqs = [greeter_protos.GreetingRequest(name=name) for name in names]
     for req in reqs:
         yield req
         time.sleep(sleep)

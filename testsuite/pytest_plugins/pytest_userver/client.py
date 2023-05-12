@@ -272,10 +272,7 @@ class AiohttpClientMonitor(service_client.AiohttpClient):
             raise ConfigurationError(
                 'handler-server-monitor component is not configured',
             )
-        if prefix is not None:
-            params = {'prefix': prefix}
-        else:
-            params = None
+        params = {'prefix': prefix} if prefix is not None else None
         response = await self.get(
             self._config.server_monitor_path, params=params,
         )
@@ -347,10 +344,7 @@ class AiohttpClientMonitor(service_client.AiohttpClient):
             f'{response}',
         )
 
-        if not metrics_list:
-            return None
-
-        return next(iter(metrics_list))
+        return None if not metrics_list else next(iter(metrics_list))
 
     async def single_metric(
             self,
@@ -622,14 +616,17 @@ class AiohttpClient(service_client.AiohttpClient):
             str, typing.Any,
         ] = self._state_manager.get_pending_update()
 
-        if 'invalidate_caches' in body and invalidate_caches:
-            if not clean_update or cache_names:
-                logger.warning(
-                    'Manual cache invalidation leads to indirect initial '
-                    'full cache invalidation',
-                )
-                await self._prepare()
-                body = {}
+        if (
+            'invalidate_caches' in body
+            and invalidate_caches
+            and (not clean_update or cache_names)
+        ):
+            logger.warning(
+                'Manual cache invalidation leads to indirect initial '
+                'full cache invalidation',
+            )
+            await self._prepare()
+            body = {}
 
         if invalidate_caches:
             body['invalidate_caches'] = {
@@ -702,8 +699,7 @@ class AiohttpClient(service_client.AiohttpClient):
             return await response.json(content_type=None)
 
     async def _prepare(self) -> None:
-        pending_update = self._state_manager.get_pending_update()
-        if pending_update:
+        if pending_update := self._state_manager.get_pending_update():
             await self._tests_control(pending_update)
 
     async def _request(  # pylint: disable=arguments-differ

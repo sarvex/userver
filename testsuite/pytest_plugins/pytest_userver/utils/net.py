@@ -84,18 +84,14 @@ def get_health_checks_info(service_config_yaml: dict) -> HealthChecks:
     checks = HealthChecks()
 
     components = service_config_yaml['components_manager']['components']
-    server = components.get('server')
-    if server:
-        port = int(server.get('listener-monitor', {}).get('port', 0))
-        if port:
+    if server := components.get('server'):
+        if port := int(server.get('listener-monitor', {}).get('port', 0)):
             checks.tcp.append(HostPort('localhost', port))
 
-        port = int(server.get('listener', {}).get('port', 0))
-        if port:
+        if port := int(server.get('listener', {}).get('port', 0)):
             checks.tcp.append(HostPort('localhost', port))
 
-    port = int(components.get('grpc-server', {}).get('port', 0))
-    if port:
+    if port := int(components.get('grpc-server', {}).get('port', 0)):
         checks.tcp.append(HostPort('localhost', port))
 
     return checks
